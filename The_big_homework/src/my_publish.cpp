@@ -225,7 +225,7 @@ int main(int argc, char* argv[])
             flag_ok=0;
             std_msgs::String msg;
             int i=1;
-            char a[20];
+            char a[20]="";
             while (*(g_result+i)!='.')
             {   
                 a[i-1] = *(g_result+i);
