@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# -*- encoding: UTF-8 -*-
 import rospy
 from std_msgs.msg import String
 from sound_play.msg import SoundRequest
@@ -11,6 +11,7 @@ soundhandle=SoundClient()
 class msg_reader:
 
     def __init__(self):
+        
         rospy.init_node("msg_reader")
         self.msg=" "
         self.isstart=True
@@ -26,43 +27,48 @@ class msg_reader:
     def msg_Callback(self,msg):
 
         if self.isstart and ~self.isend:
-            recoder=open('report.txt','w')
-            self.msg=msg
+            self.msg=msg.data
             Msg=str(self.msg)
             print(Msg)
             if self.flag_1:
                 soundhandle.say("Here is your medicine , please take it on time.")
                 self.flag_1=False
                 self.flag_2=True
-                time.sleep(15)
+                time.sleep(10)
             
             if self.flag_2:
                 soundhandle.say("Now we start the daily inspection")
                 self.flag_2=False
                 self.flag_3=True
-                time.sleep(15)
-
-            if self.flag_3:
+                time.sleep(5)
                 soundhandle.say("Have you taken your tempeture?What is it?")
 
-                if "thirty-six" in Msg or "thirty-seven" in Msg or "thirty-eight" in Msg or "thirty-nine" in Msg or "forty" in Msg:
-                    recoder.write('The body tempereture:'+Msg+'\n')
-                time.sleep(15)
-                soundhandle.say("How about the blood pressure?")
+            if self.flag_3:
+                if "36" in Msg or "37" in Msg or "38" in Msg or "39" in Msg or "40" in Msg:
+                    recoder=open('report.txt','w')
+                    recoder.write('The body tempereture:'+Msg[0:2]+'℃'+'\n')
+                    recoder.close()
+                    time.sleep(15)
+                    soundhandle.say("How about the blood pressure?")
 
-                if "one hundred and twenty and ninty" in Msg:
-                    recoder.write('The blood pressure:\nSystolic blood pressure:120\nDiastoic blood pressure:90\n')
-                time.sleep(15)
-                soundhandle.say("I have sent the report to the doctor.What else do you need?")
-                self.flag_3=False
+                if "120 and 90" in Msg:
+                    time.sleep(15)
+                    recoder=open('report.txt','a')
+                    recoder.write('The blood pressure:\nSystolic blood pressure:120mmHg\nDiastoic blood pressure:90mmHg\n')
+                    recoder.close()
+                    soundhandle.say("I have sent the report to the doctor.What else do you need?")
 
-            if "no thank you very much" in Msg:
-                soundhandle.say('Bye')
-                self.isend=True
-                self.end_pub.publish("finished")
-                recoder.close()
+                if "thanks" in Msg:
+                    soundhandle.say('Bye. Hope that you will recover soon.')
+                    self.isend=True
+                
+                    self.end_pub.publish("finished")
+        
+                
+                    exit()
 
     def startCallback(self):
+        
         self.isstart=True
 
 if __name__ == '__main__':
