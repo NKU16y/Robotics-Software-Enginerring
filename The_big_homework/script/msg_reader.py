@@ -14,7 +14,7 @@ class msg_reader:
         
         rospy.init_node("msg_reader")
         self.msg=" "
-        self.isstart=True
+        self.isstart=False
         self.isend=False
         self.flag_1=True
         self.flag_2=False
