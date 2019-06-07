@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- encoding: UTF-8 -*-
 import rospy
+import os
 from std_msgs.msg import String
 from sound_play.msg import SoundRequest
 from sound_play.libsoundplay import SoundClient
@@ -32,6 +33,12 @@ class msg_reader:
             Msg=str(self.msg)
             print(Msg)
             if self.flag_1:
+                recoder=open('report.txt','w')
+                recoder.write("Name:xxx"+'\n')
+                recoder.write("Gender:Man"+'\n')
+                recoder.write('Age:20'+'\n')
+                recoder.write('Date:'+time.strftime("%Y/%m/%d")+'\n')
+                recoder.close()
                 soundhandle.say("Here is your medicine , please take it on time.")
                 self.flag_1=False
                 self.flag_2=True
@@ -46,7 +53,7 @@ class msg_reader:
 
             if self.flag_3:
                 if "36" in Msg or "37" in Msg or "38" in Msg or "39" in Msg or "40" in Msg:
-                    recoder=open('report.txt','w')
+                    recoder=open('report.txt','a')
                     recoder.write('The body tempereture:'+Msg[0:2]+'℃'+'\n')
                     recoder.close()
                     time.sleep(15)
@@ -62,7 +69,7 @@ class msg_reader:
                 if "thanks" in Msg:
                     soundhandle.say('Bye. Hope that you will recover soon.')
                     self.isend=True
-                
+                    os.rename('report.txt','Report.txt')
                     self.end_pub.publish("finished")
         
                 
