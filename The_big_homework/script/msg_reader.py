@@ -20,7 +20,7 @@ class msg_reader:
         self.flag_1=True
         self.flag_2=False
         self.flag_3=False
-        self.msg_sub=rospy.Subscriber("/dialog",String,self.startCallback)
+        self.start_sub=rospy.Subscriber("/dialog",String,self.startCallback)
         self.msg_sub=rospy.Subscriber("/rec_result",String,self.msg_Callback)
         self.end_pub=rospy.Publisher("/finished",String,queue_size=15)
         rospy.Rate(1)
